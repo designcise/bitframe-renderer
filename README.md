@@ -1,0 +1,3 @@
+# BitFrame\Renderer
+
+Template renderer.
