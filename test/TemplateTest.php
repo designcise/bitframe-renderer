@@ -13,9 +13,12 @@ namespace BitFrame\Renderer\Test;
 use PHPUnit\Framework\TestCase;
 use BitFrame\Renderer\{TemplateRenderer, Template};
 use BitFrame\Renderer\Test\Asset\StringUtil;
+use RuntimeException;
+use Throwable;
 
 use function strtoupper;
 use function strtolower;
+use function ob_get_level;
 
 /**
  * @covers \BitFrame\Renderer\Template
@@ -37,6 +40,30 @@ class TemplateTest extends TestCase
         $tpl->withData(['baz' => 'qux']);
 
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $tpl->getData());
+    }
+
+    public function testRenderWhenTemplateDoesNotExists(): void
+    {
+        $tpl = new Template(new TemplateRenderer(), 'foo::bar');
+
+        $this->expectException(RuntimeException::class);
+
+        $tpl->render();
+    }
+
+    public function testRenderCleansBufferAndThrowsExceptionIfRenderingFails(): void
+    {
+        $renderer = new TemplateRenderer();
+        $renderer->addFolder('assets', self::ASSETS_DIR);
+
+        $tpl = new Template($renderer, 'assets::has_errors');
+
+        try {
+            $tpl->render(['var' => 1]);
+        } catch (Throwable $e) {}
+
+        $this->assertSame(1, ob_get_level());
+        $this->assertSame('', ob_get_contents());
     }
 
     public function testGetFilePath(): void
@@ -126,6 +153,30 @@ EXP;
         ]);
 
         $this->assertSame('&lt;A HREF=&#039;#&#039;&gt;TEST&lt;/A&gt;', $output);
+    }
+
+    public function testBatchThrowsErrorWhenFunctionNotFound(): void
+    {
+        $renderer = new TemplateRenderer();
+        $renderer->addFolder('assets', self::ASSETS_DIR);
+
+        $tpl = new Template($renderer, 'assets::batch');
+
+        $this->expectException(RuntimeException::class);
+
+        $tpl->batch('test', 'strtoupper|nonexistent');
+    }
+
+    public function testBatchCanApplyCallables(): void
+    {
+        $renderer = new TemplateRenderer();
+        $renderer->addFolder('assets', self::ASSETS_DIR);
+
+        $tpl = new Template($renderer, 'assets::batch');
+
+        $output = $tpl->batch('TEST ME', 'strtolower|ucwords');
+
+        $this->assertSame('Test Me', $output);
     }
 
     public function testFetchTemplate(): void
