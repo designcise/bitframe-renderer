@@ -1,0 +1,1 @@
+<p>foo <?= $this->fetch('assets::fetch'); ?></p>

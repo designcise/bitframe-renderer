@@ -127,4 +127,31 @@ EXP;
 
         $this->assertSame('&lt;A HREF=&#039;#&#039;&gt;TEST&lt;/A&gt;', $output);
     }
+
+    public function testFetchTemplate(): void
+    {
+        $renderer = new TemplateRenderer();
+        $renderer->addFolder('assets', self::ASSETS_DIR);
+
+        $tpl = new Template($renderer, 'assets::child');
+
+        $output = $tpl->fetch('assets::fetch');
+
+        $this->assertSame('hello world!', $output);
+    }
+
+    /**
+     * @throws \Throwable
+     */
+    public function testFetchInsideAnotherTemplate(): void
+    {
+        $renderer = new TemplateRenderer();
+        $renderer->addFolder('assets', self::ASSETS_DIR);
+
+        $tpl = new Template($renderer, 'assets::fetch_inside');
+
+        $output = $tpl->render();
+
+        $this->assertSame('<p>foo hello world!</p>', $output);
+    }
 }
