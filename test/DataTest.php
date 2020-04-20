@@ -111,6 +111,20 @@ class DataTest extends TestCase
         }
     }
 
+    public function testAddMultipleLocalVars(): void
+    {
+        $templates = ['first', 'second'];
+
+        $this->data->add(['foo' => 'bar']);
+        $this->data->add(['hello' => 'world'], $templates);
+        $this->data->add(['baz' => 'qux'], 'first');
+
+        $this->assertSame(
+            ['foo' => 'bar', 'hello' => 'world', 'baz' => 'qux'],
+            $this->data->get('first')
+        );
+    }
+
     public function invalidTemplateProvider(): array
     {
         return [
