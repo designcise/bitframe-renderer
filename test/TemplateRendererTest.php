@@ -13,7 +13,6 @@ namespace BitFrame\Renderer\Test;
 use PHPUnit\Framework\TestCase;
 use BitFrame\Renderer\{TemplateRenderer, Template};
 use BitFrame\Renderer\Test\Asset\StringUtil;
-use TypeError;
 use RuntimeException;
 use InvalidArgumentException;
 
@@ -162,26 +161,6 @@ class TemplateRendererTest extends TestCase
         $tpl = $this->renderer->createTemplateByName('foo::bar');
 
         $this->assertInstanceOf(Template::class, $tpl);
-    }
-
-    public function templateDirectoryProvider(): array
-    {
-        return [
-            'empty' => [''],
-            'named' => ['foobar'],
-        ];
-    }
-
-    /**
-     * @dataProvider templateDirectoryProvider
-     *
-     * @param string $name
-     */
-    public function testCreatingTemplateWithoutNameShouldThrowTypeError(
-        string $name
-    ): void {
-        $this->expectException(TypeError::class);
-        $this->renderer->createTemplateByName($name);
     }
 
     public function invalidTemplateNameProvider(): array
