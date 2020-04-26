@@ -20,9 +20,10 @@ Please note that this package requires PHP 7.4.0 or newer.
 ```php
 use BitFrame\Renderer\Renderer;
 
-$renderer = new Renderer('tpl');
+$renderer = new Renderer([
+    'main' => __DIR__ . '/tpl/',
+], 'tpl');
 
-$renderer->addFolder('main', __DIR__ . '/tpl/');
 $renderer->withData(['foo' => 'bar']);
 
 $output = $renderer->render('main::test', ['baz' => 'qux']);

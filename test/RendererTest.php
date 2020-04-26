@@ -31,7 +31,7 @@ class RendererTest extends TestCase
 
     public function setUp(): void
     {
-        $this->renderer = new Renderer();
+        $this->renderer = new Renderer([]);
     }
 
     public function fileExtensionProvider(): array
@@ -54,23 +54,25 @@ class RendererTest extends TestCase
      */
     public function testSetAndGetFileExtension(string $fileExt, string $expected): void
     {
-        $renderer = new Renderer($fileExt);
+        $renderer = new Renderer([], $fileExt);
 
-        $this->assertSame($expected, $renderer->getFileExtension());
+        $this->assertSame($expected, $renderer->getFileExt());
     }
 
     public function testAddAndGetFolder(): void
     {
-        $this->renderer->addFolder('test', 'directory/to/templates');
-        $this->renderer->addFolder('foo', 'bar/baz/qux');
+        $renderer = new Renderer([
+            'test' => 'directory/to/templates',
+            'foo' => 'bar/baz/qux',
+        ]);
 
         $this->assertSame([
             'test' => 'directory/to/templates',
             'foo' => 'bar/baz/qux',
-        ], $this->renderer->getFolders());
+        ], $renderer->getFolders());
 
-        $this->assertSame('directory/to/templates', $this->renderer->getFolderPathByAlias('test'));
-        $this->assertSame('bar/baz/qux', $this->renderer->getFolderPathByAlias('foo'));
+        $this->assertSame('directory/to/templates', $renderer->getFolderPathByAlias('test'));
+        $this->assertSame('bar/baz/qux', $renderer->getFolderPathByAlias('foo'));
     }
 
     public function testAddingFolderTwiceThrowsException(): void
@@ -78,14 +80,6 @@ class RendererTest extends TestCase
         $this->expectException(RuntimeException::class);
 
         $this->renderer->getFolderPathByAlias('non-existent');
-    }
-
-    public function testGetFolderPathByAliasForNonExistingFolderShouldThrowException(): void
-    {
-        $this->expectException(RuntimeException::class);
-
-        $this->renderer->addFolder('test', 'directory/to/templates');
-        $this->renderer->addFolder('test', 'foo/bar/baz/qux');
     }
 
     public function dataProvider(): array
@@ -157,8 +151,8 @@ class RendererTest extends TestCase
 
     public function testCreateTemplateByName(): void
     {
-        $this->renderer->addFolder('foo', 'bar/baz/qux');
-        $tpl = $this->renderer->createTemplateByName('foo::bar');
+        $renderer = new Renderer(['foo' => 'bar/baz/qux']);
+        $tpl = $renderer->createTemplateByName('foo::bar');
 
         $this->assertInstanceOf(Template::class, $tpl);
     }
@@ -195,6 +189,7 @@ class RendererTest extends TestCase
 
         /** @var \PHPUnit\Framework\MockObject\MockObject|Renderer $renderer */
         $renderer = $this->getMockBuilder(Renderer::class)
+            ->disableOriginalConstructor()
             ->onlyMethods(['createTemplateByName'])
             ->getMock();
 
@@ -205,8 +200,7 @@ class RendererTest extends TestCase
 
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
-        $renderer = new Renderer();
-        $renderer->addFolder('assets', self::ASSETS_DIR);
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
         $renderer->withData(['uppercase' => static fn (string $arg): string => strtoupper($arg)]);
 
         $output = $renderer->render('assets::functions', [
@@ -218,8 +212,7 @@ class RendererTest extends TestCase
 
     public function testTemplateCanUseGlobalAndLocalObjectMethods(): void
     {
-        $renderer = new Renderer();
-        $renderer->addFolder('assets', self::ASSETS_DIR);
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
 
         $output = $renderer->render('assets::object', [
             'str' => new StringUtil(),
@@ -230,8 +223,7 @@ class RendererTest extends TestCase
 
     public function testTemplateCanBatchApplyFunctions(): void
     {
-        $renderer = new Renderer();
-        $renderer->addFolder('assets', self::ASSETS_DIR);
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
 
         $output = $renderer->render('assets::batch', [
             'uppercase' => static fn (string $arg): string => strtoupper($arg),

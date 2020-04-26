@@ -241,7 +241,7 @@ class Template
         return rtrim($this->engine->getFolderPathByAlias($this->alias), DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
             . $this->fileName . '.'
-            . $this->engine->getFileExtension();
+            . $this->engine->getFileExt();
     }
 
     /**

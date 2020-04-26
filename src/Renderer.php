@@ -25,39 +25,19 @@ class Renderer
     /** @var string */
     public const DEFAULT_FILE_EXT = 'tpl';
 
-    protected string $fileExtension;
+    protected string $fileExt;
 
     protected array $folders = [];
 
     protected Data $data;
 
-    public function __construct(string $fileExtension = self::DEFAULT_FILE_EXT)
-    {
-        $this->fileExtension = strtolower($fileExtension) ?: self::DEFAULT_FILE_EXT;
+    public function __construct(
+        array $folders,
+        string $fileExt = self::DEFAULT_FILE_EXT
+    ) {
+        $this->folders = $folders;
+        $this->fileExt = strtolower($fileExt) ?: self::DEFAULT_FILE_EXT;
         $this->data = new Data();
-    }
-
-    /**
-     * Add a new template folder for grouping templates under different namespaces.
-     *
-     * @param string $name
-     * @param string $path
-     *
-     * @return $this
-     */
-    public function addFolder(
-        string $name,
-        string $path
-    ): self {
-        if (isset($this->folders[$name])) {
-            throw new RuntimeException(
-                'The template folder "' . $name . '" is already being used.'
-            );
-        }
-
-        $this->folders[$name] = $path;
-
-        return $this;
     }
 
     /**
@@ -82,9 +62,9 @@ class Renderer
         return $this->createTemplateByName($name)->render($data);
     }
 
-    public function getFileExtension(): string
+    public function getFileExt(): string
     {
-        return $this->fileExtension;
+        return $this->fileExt;
     }
 
     public function getData(?string $template = null): array
