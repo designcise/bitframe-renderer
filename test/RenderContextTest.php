@@ -66,6 +66,70 @@ class RenderContextTest extends TestCase
         $this->assertSame('foobar', $tpl->getSections()->get('test'));
     }
 
+    public function testAppend(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section_append', $renderer);
+        $tpl->render();
+
+        $this->assertSame('foobar', $tpl->getSections()->get('test'));
+    }
+
+    public function testPrepend(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section_prepend', $renderer);
+        $tpl->render();
+
+        $this->assertSame('barfoo', $tpl->getSections()->get('test'));
+    }
+
+    public function testSection(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section', $renderer);
+        $context = new RenderContext($tpl);
+
+        $tpl->render();
+
+        $this->assertSame('foobar', $context->section('test'));
+    }
+
+    public function testCanGetDefaultForNonExistentSection(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section', $renderer);
+        $context = new RenderContext($tpl);
+
+        $tpl->render();
+
+        $this->assertSame('default', $context->section('non-existent', 'default'));
+    }
+
+    public function testGetData(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $renderer->withData(['global' => 'foo']);
+
+        $tpl = new Template('assets::helloworld', $renderer);
+        $tpl->withData(['local' => 'bar']);
+
+        $context = new RenderContext($tpl);
+
+        $this->assertSame(['global' => 'foo', 'local' => 'bar'], $context->getData());
+    }
+
+    public function testFetch(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section', $renderer);
+        $context = new RenderContext($tpl);
+
+        $output = $context->fetch('assets::helloworld');
+
+        $this->assertSame('hello world', $output);
+    }
+
     public function testApplyThrowsErrorWhenFunctionNotFound(): void
     {
         $this->expectException(RuntimeException::class);
@@ -78,5 +142,20 @@ class RenderContextTest extends TestCase
         $output = $this->context->apply('TEST ME', 'strtolower|ucwords');
 
         $this->assertSame('Test Me', $output);
+    }
+
+    public function testApplyFunctionFromTemplateLocals(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section', $renderer);
+        $context = new RenderContext($tpl);
+
+        $tpl->render([
+            'foo' => static function ($string) {
+                return 'Test: ' . $string;
+            },
+        ]);
+
+        $this->assertSame('TEST: HELLO!', $context->apply('Hello!', 'foo|strtoupper'));
     }
 }
