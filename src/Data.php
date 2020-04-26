@@ -30,16 +30,19 @@ class Data
     /**
      * @param  array $data
      * @param  null|string|array $templates
+     *
      * @return $this
      */
     public function add(array $data, $templates = null): self
     {
         if (null === $templates) {
-            return $this->shareWithAll($data);
+            $this->shareWithAll($data);
+            return $this;
         }
 
         if (is_array($templates) || is_string($templates)) {
-            return $this->shareWithSome($data, (array) $templates);
+            $this->shareWithSome($data, (array) $templates);
+            return $this;
         }
 
         throw new InvalidArgumentException(
@@ -56,21 +59,17 @@ class Data
         return $this->sharedVars;
     }
 
-    private function shareWithAll(array $data): self
+    private function shareWithAll(array $data): void
     {
         $this->sharedVars = array_merge($this->sharedVars, $data);
-
-        return $this;
     }
 
-    private function shareWithSome(array $data, array $templates): self
+    private function shareWithSome(array $data, array $templates): void
     {
         foreach ($templates as $template) {
             $this->templateSpecificVars[$template] = (isset($this->templateSpecificVars[$template]))
                 ? array_merge($this->templateSpecificVars[$template], $data)
                 : $data;
         }
-
-        return $this;
     }
 }

@@ -23,6 +23,8 @@ class RenderContext
     /** @var string */
     public const SECTION_PREPEND = 'prepend';
 
+    private Template $tpl;
+
     public ?string $currSectionName = null;
 
     public string $newSectionMode = self::SECTION_ADD;
@@ -122,15 +124,18 @@ class RenderContext
 
         foreach ($functionsList as $function) {
             if ($this->fnExists($function)) {
-                $subject = $this->tpl->getVar($function)($subject);
-            } elseif (is_callable($function)) {
-                $subject = $function($subject);
-            } else {
-                throw new RuntimeException(sprintf(
-                    'The batch function could not find the "%s" function.',
-                    $function
-                ));
+                $function = $this->tpl->getVar($function);
             }
+
+            if (is_callable($function)) {
+                $subject = $function($subject);
+                continue;
+            }
+
+            throw new RuntimeException(sprintf(
+                'The batch function could not find the "%s" function.',
+                $function
+            ));
         }
 
         return $subject;
@@ -138,8 +143,8 @@ class RenderContext
 
     public function fnExists(string $name): bool
     {
-        $fn = $this->tpl->getVar($name);
-        return (! empty($fn) && is_callable($fn));
+        $func = $this->tpl->getVar($name);
+        return (! empty($func) && is_callable($func));
     }
 
     public function getParentTemplate(): string

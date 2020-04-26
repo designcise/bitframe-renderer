@@ -85,7 +85,9 @@ class Template
             fn () => extract($data, EXTR_SKIP) & include $file
         )->bindTo($context));
 
-        if (! empty($parentTpl = $context->getParentTemplate())) {
+        $parentTpl = $context->getParentTemplate();
+
+        if (! empty($parentTpl)) {
             $parent = $this->engine->createTemplate($parentTpl, $this->sections);
             $parent->getSections()->add(self::CONTENT_SECTION_KEY, $content);
             $content = $parent->render($context->getParentData());
@@ -163,19 +165,20 @@ class Template
         return $this;
     }
 
-    private function buffer(callable $wrap) {
+    private function buffer(callable $wrap)
+    {
         $level = ob_get_level();
 
         try {
             ob_start();
             $wrap();
             return ob_get_clean();
-        } catch (Throwable $e) {}
+        } catch (Throwable $e) {
+            while (ob_get_level() > $level) {
+                ob_end_clean();
+            }
 
-        while (ob_get_level() > $level) {
-            ob_end_clean();
+            throw $e;
         }
-
-        throw $e;
     }
 }
