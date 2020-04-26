@@ -18,9 +18,9 @@ Please note that this package requires PHP 7.4.0 or newer.
 ## Usage Example
 
 ```php
-use BitFrame\Renderer\TemplateRenderer;
+use BitFrame\Renderer\Renderer;
 
-$renderer = new TemplateRenderer('tpl');
+$renderer = new Renderer('tpl');
 
 $renderer->addFolder('main', __DIR__ . '/tpl/');
 $renderer->withData(['foo' => 'bar']);

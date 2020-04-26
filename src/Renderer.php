@@ -20,7 +20,7 @@ use function strtolower;
  * Manages templates, global template data (including vars and functions),
  * and template folders.
  */
-class TemplateRenderer
+class Renderer
 {
     /** @var string */
     public const DEFAULT_FILE_EXT = 'tpl';

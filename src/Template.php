@@ -31,7 +31,7 @@ class Template
     /** @var string */
     private const CONTENT_SECTION_KEY = 'content';
 
-    protected TemplateRenderer $engine;
+    protected Renderer $engine;
     
     protected string $alias;
     
@@ -49,7 +49,7 @@ class Template
 
     protected array $layoutData;
 
-    public function __construct(TemplateRenderer $engine, string $name)
+    public function __construct(Renderer $engine, string $name)
     {
         $this->engine = $engine;
         $this
@@ -79,39 +79,26 @@ class Template
      */
     public function render(array $data = []): string
     {
-        $this->withData($data);
-        extract($this->data, EXTR_SKIP);
-
         if (! $this->exists()) {
             throw new RuntimeException(
                 'The template "' . $this->fileName . '" could not be found at "' . $this->getFilePath() . '".'
             );
         }
 
-        try {
-            $level = ob_get_level();
-            ob_start();
+        $this->withData($data);
+        $content = $this->buffer(
+            fn () => extract($this->data, EXTR_SKIP) & include $this->getFilePath()
+        );
 
-            include $this->getFilePath();
-
-            $content = ob_get_clean();
-
-            if (isset($this->layoutName)) {
-                $layout = $this->engine->createTemplateByName($this->layoutName);
-                $layout->sections = array_merge($this->sections, [
-                    self::CONTENT_SECTION_KEY => $content
-                ]);
-                $content = $layout->render($this->layoutData);
-            }
-
-            return $content;
-        } catch (Throwable $e) {
-            while (ob_get_level() > $level) {
-                ob_end_clean();
-            }
-
-            throw $e;
+        if (isset($this->layoutName)) {
+            $layout = $this->engine->createTemplateByName($this->layoutName);
+            $layout->sections = array_merge($this->sections, [
+                self::CONTENT_SECTION_KEY => $content
+            ]);
+            $content = $layout->render($this->layoutData);
         }
+
+        return $content;
     }
 
     public function parent(string $name, array $data = []): void
@@ -293,5 +280,21 @@ class Template
         }
 
         return $this;
+    }
+
+    private function buffer(callable $wrap) {
+        $level = ob_get_level();
+
+        try {
+            ob_start();
+            $wrap();
+            return ob_get_clean();
+        } catch (Throwable $e) {}
+
+        while (ob_get_level() > $level) {
+            ob_end_clean();
+        }
+
+        throw $e;
     }
 }

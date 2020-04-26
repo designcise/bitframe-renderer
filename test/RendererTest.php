@@ -11,7 +11,7 @@
 namespace BitFrame\Renderer\Test;
 
 use PHPUnit\Framework\TestCase;
-use BitFrame\Renderer\{TemplateRenderer, Template};
+use BitFrame\Renderer\{Renderer, Template};
 use BitFrame\Renderer\Test\Asset\StringUtil;
 use RuntimeException;
 use InvalidArgumentException;
@@ -20,24 +20,24 @@ use function strtoupper;
 use function strtolower;
 
 /**
- * @covers \BitFrame\Renderer\TemplateRenderer
+ * @covers \BitFrame\Renderer\Renderer
  */
-class TemplateRendererTest extends TestCase
+class RendererTest extends TestCase
 {
     /** @var string */
     private const ASSETS_DIR = __DIR__ . '/Asset/';
 
-    private TemplateRenderer $renderer;
+    private Renderer $renderer;
 
     public function setUp(): void
     {
-        $this->renderer = new TemplateRenderer();
+        $this->renderer = new Renderer();
     }
 
     public function fileExtensionProvider(): array
     {
         return [
-            'empty' => ['', TemplateRenderer::DEFAULT_FILE_EXT],
+            'empty' => ['', Renderer::DEFAULT_FILE_EXT],
             'html' => ['html', 'html'],
             'long' => ['somethingreallylong', 'somethingreallylong'],
             'mixed case' => ['mixedCase', 'mixedcase'],
@@ -54,7 +54,7 @@ class TemplateRendererTest extends TestCase
      */
     public function testSetAndGetFileExtension(string $fileExt, string $expected): void
     {
-        $renderer = new TemplateRenderer($fileExt);
+        $renderer = new Renderer($fileExt);
 
         $this->assertSame($expected, $renderer->getFileExtension());
     }
@@ -193,8 +193,8 @@ class TemplateRendererTest extends TestCase
 
         $tpl->method('render')->willReturn('hello world!');
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject|TemplateRenderer $renderer */
-        $renderer = $this->getMockBuilder(TemplateRenderer::class)
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Renderer $renderer */
+        $renderer = $this->getMockBuilder(Renderer::class)
             ->onlyMethods(['createTemplateByName'])
             ->getMock();
 
@@ -205,7 +205,7 @@ class TemplateRendererTest extends TestCase
 
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
         $renderer->withData(['uppercase' => static fn (string $arg): string => strtoupper($arg)]);
 
@@ -218,7 +218,7 @@ class TemplateRendererTest extends TestCase
 
     public function testTemplateCanUseGlobalAndLocalObjectMethods(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $output = $renderer->render('assets::object', [
@@ -230,7 +230,7 @@ class TemplateRendererTest extends TestCase
 
     public function testTemplateCanBatchApplyFunctions(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $output = $renderer->render('assets::batch', [

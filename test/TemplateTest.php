@@ -11,7 +11,7 @@
 namespace BitFrame\Renderer\Test;
 
 use PHPUnit\Framework\TestCase;
-use BitFrame\Renderer\{TemplateRenderer, Template};
+use BitFrame\Renderer\{Renderer, Template};
 use BitFrame\Renderer\Test\Asset\StringUtil;
 use RuntimeException;
 use Throwable;
@@ -30,7 +30,7 @@ class TemplateTest extends TestCase
 
     public function testWithData(): void
     {
-        $renderer = $this->getMockBuilder(TemplateRenderer::class)
+        $renderer = $this->getMockBuilder(Renderer::class)
             ->setMethods(['getData'])
             ->getMock();
 
@@ -44,7 +44,7 @@ class TemplateTest extends TestCase
 
     public function testRenderWhenTemplateDoesNotExists(): void
     {
-        $tpl = new Template(new TemplateRenderer(), 'foo::bar');
+        $tpl = new Template(new Renderer(), 'foo::bar');
 
         $this->expectException(RuntimeException::class);
 
@@ -53,7 +53,7 @@ class TemplateTest extends TestCase
 
     public function testRenderCleansBufferAndThrowsExceptionIfRenderingFails(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::has_errors');
@@ -68,7 +68,7 @@ class TemplateTest extends TestCase
 
     public function testGetFilePath(): void
     {
-        $renderer = new TemplateRenderer('html');
+        $renderer = new Renderer('html');
         $renderer->addFolder('foo', 'bar/baz/qux');
         $tpl = new Template($renderer, 'foo::bar');
 
@@ -77,7 +77,7 @@ class TemplateTest extends TestCase
 
     public function testGetVar(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('foo', 'bar/baz/qux');
         $renderer->withData(['hello' => 'world']);
 
@@ -91,7 +91,7 @@ class TemplateTest extends TestCase
 
     public function testCanLoadParentFromChild(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
         $renderer->withData(['foo' => 'bar']);
 
@@ -113,7 +113,7 @@ EXP;
 
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
         $renderer->withData(['uppercase' => static fn (string $arg): string => strtoupper($arg)]);
 
@@ -128,7 +128,7 @@ EXP;
 
     public function testTemplateCanUseGlobalAndLocalObjectMethods(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::object');
@@ -142,7 +142,7 @@ EXP;
 
     public function testTemplateCanBatchApplyFunctions(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::batch');
@@ -157,7 +157,7 @@ EXP;
 
     public function testBatchThrowsErrorWhenFunctionNotFound(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::batch');
@@ -169,7 +169,7 @@ EXP;
 
     public function testBatchCanApplyCallables(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::batch');
@@ -181,7 +181,7 @@ EXP;
 
     public function testFetchTemplate(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::child');
@@ -196,7 +196,7 @@ EXP;
      */
     public function testFetchInsideAnotherTemplate(): void
     {
-        $renderer = new TemplateRenderer();
+        $renderer = new Renderer();
         $renderer->addFolder('assets', self::ASSETS_DIR);
 
         $tpl = new Template($renderer, 'assets::fetch_inside');
