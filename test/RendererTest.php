@@ -40,8 +40,8 @@ class RendererTest extends TestCase
             'empty' => ['', Renderer::DEFAULT_FILE_EXT],
             'html' => ['html', 'html'],
             'long' => ['somethingreallylong', 'somethingreallylong'],
-            'mixed case' => ['mixedCase', 'mixedcase'],
-            'upper case' => ['UPPER', 'upper'],
+            'mixed case' => ['mixedCase', 'mixedCase'],
+            'upper case' => ['UPPER', 'UPPER'],
             'double' => ['tpl.html', 'tpl.html'],
         ];
     }

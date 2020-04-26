@@ -14,8 +14,6 @@ namespace BitFrame\Renderer;
 
 use RuntimeException;
 
-use function strtolower;
-
 /**
  * Manages templates, global template data (including vars and functions),
  * and template folders.
@@ -36,7 +34,7 @@ class Renderer
         string $fileExt = self::DEFAULT_FILE_EXT
     ) {
         $this->folders = $folders;
-        $this->fileExt = strtolower($fileExt) ?: self::DEFAULT_FILE_EXT;
+        $this->fileExt = $fileExt ?: self::DEFAULT_FILE_EXT;
         $this->data = new Data();
     }
 
