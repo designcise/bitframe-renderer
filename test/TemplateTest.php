@@ -37,7 +37,7 @@ class TemplateTest extends TestCase
 
         $renderer->method('getData')->willReturn(['foo' => 'bar']);
 
-        $tpl = new Template($renderer, 'test::fetch');
+        $tpl = new Template('test::fetch', $renderer);
         $tpl->withData(['baz' => 'qux']);
 
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $tpl->getData());
@@ -47,13 +47,13 @@ class TemplateTest extends TestCase
     {
         $this->expectException(RuntimeException::class);
 
-        $tpl = new Template(new Renderer([]), 'foo::bar');
+        new Template('foo::bar', new Renderer([]));
     }
 
     public function testRenderCleansBufferAndThrowsExceptionIfRenderingFails(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::has_errors');
+        $tpl = new Template('assets::has_errors', $renderer);
 
         try {
             $tpl->render(['var' => 1]);
@@ -66,9 +66,9 @@ class TemplateTest extends TestCase
     public function testGetFilePath(): void
     {
         $renderer = new Renderer(['foo' => 'bar/baz/qux'], 'html');
-        $tpl = new Template($renderer, 'foo::bar');
+        $tpl = new Template('foo::bar', $renderer);
 
-        $this->assertSame('bar/baz/qux/bar.html', $tpl->getFilePath());
+        $this->assertSame('bar/baz/qux/bar.html', $tpl->getPath());
     }
 
     public function testGetVar(): void
@@ -76,7 +76,7 @@ class TemplateTest extends TestCase
         $renderer = new Renderer(['foo' => 'bar/baz/qux']);
         $renderer->withData(['hello' => 'world']);
 
-        $tpl = new Template($renderer, 'foo::bar');
+        $tpl = new Template('foo::bar', $renderer);
         $tpl->withData(['test' => 1234]);
 
         $this->assertSame(1234, $tpl->getVar('test'));
@@ -89,7 +89,7 @@ class TemplateTest extends TestCase
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
         $renderer->withData(['foo' => 'bar']);
 
-        $tpl = new Template($renderer, 'assets::child');
+        $tpl = new Template('assets::child', $renderer);
 
         $output = $tpl->render();
 
@@ -110,7 +110,7 @@ EXP;
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
         $renderer->withData(['uppercase' => static fn (string $arg): string => strtoupper($arg)]);
 
-        $tpl = new Template($renderer, 'assets::functions');
+        $tpl = new Template('assets::functions', $renderer);
 
         $output = $tpl->render([
             'lowercase' => static fn (string $arg): string => strtolower($arg),
@@ -122,7 +122,7 @@ EXP;
     public function testTemplateCanUseGlobalAndLocalObjectMethods(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::object');
+        $tpl = new Template('assets::object', $renderer);
 
         $output = $tpl->render([
             'str' => new StringUtil(),
@@ -131,10 +131,10 @@ EXP;
         $this->assertSame('HELLO world!', $output);
     }
 
-    public function testTemplateCanBatchApplyFunctions(): void
+    public function testTemplateCanApplyFunctions(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::batch');
+        $tpl = new Template('assets::apply', $renderer);
 
         $output = $tpl->render([
             'uppercase' => static fn (string $arg): string => strtoupper($arg),
@@ -142,48 +142,5 @@ EXP;
         ]);
 
         $this->assertSame('&lt;A HREF=&#039;#&#039;&gt;TEST&lt;/A&gt;', $output);
-    }
-
-    public function testBatchThrowsErrorWhenFunctionNotFound(): void
-    {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::batch');
-
-        $this->expectException(RuntimeException::class);
-
-        $tpl->batch('test', 'strtoupper|nonexistent');
-    }
-
-    public function testBatchCanApplyCallables(): void
-    {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::batch');
-
-        $output = $tpl->batch('TEST ME', 'strtolower|ucwords');
-
-        $this->assertSame('Test Me', $output);
-    }
-
-    public function testFetchTemplate(): void
-    {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::child');
-
-        $output = $tpl->fetch('assets::fetch');
-
-        $this->assertSame('hello world!', $output);
-    }
-
-    /**
-     * @throws \Throwable
-     */
-    public function testFetchInsideAnotherTemplate(): void
-    {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template($renderer, 'assets::fetch_inside');
-
-        $output = $tpl->render();
-
-        $this->assertSame('<p>foo hello world!</p>', $output);
     }
 }

@@ -16,7 +16,7 @@ use RuntimeException;
 
 /**
  * Manages templates, global template data (including vars and functions),
- * and template folders.
+ * and template paths.
  */
 class Renderer
 {
@@ -40,24 +40,34 @@ class Renderer
 
     /**
      * @param  array $data
-     * @param  null|string|array $templates
+     * @param  null|string|array $tplNames
      *
      * @return $this
      */
-    public function withData(array $data, $templates = null): self
+    public function withData(array $data, $tplNames = null): self
     {
-        $this->data->add($data, $templates);
+        $this->data->add($data, $tplNames);
         return $this;
     }
 
-    public function createTemplateByName(string $name): Template
-    {
-        return new Template($this, $name);
+    public function createTemplate(
+        string $name,
+        ?Sections $sections = null
+    ): Template {
+        return new Template($name, $this, $sections);
     }
 
+    /**
+     * @param string $name
+     * @param array $data
+     *
+     * @return string
+     *
+     * @throws \Throwable
+     */
     public function render(string $name, array $data = []): string
     {
-        return $this->createTemplateByName($name)->render($data);
+        return $this->createTemplate($name)->render($data);
     }
 
     public function getFileExt(): string
@@ -65,9 +75,9 @@ class Renderer
         return $this->fileExt;
     }
 
-    public function getData(?string $template = null): array
+    public function getData(?string $tplName = null): array
     {
-        return $this->data->get($template);
+        return $this->data->get($tplName);
     }
 
     public function getPaths(): array

@@ -149,10 +149,10 @@ class RendererTest extends TestCase
         );
     }
 
-    public function testCreateTemplateByName(): void
+    public function testcreateTemplate(): void
     {
         $renderer = new Renderer(['foo' => 'bar/baz/qux']);
-        $tpl = $renderer->createTemplateByName('foo::bar');
+        $tpl = $renderer->createTemplate('foo::bar');
 
         $this->assertInstanceOf(Template::class, $tpl);
     }
@@ -171,11 +171,11 @@ class RendererTest extends TestCase
      *
      * @param string $name
      */
-    public function testCreateTemplateByNameWithInvalidNameShouldThrowException(
+    public function testcreateTemplateWithInvalidNameShouldThrowException(
         string $name
     ): void {
         $this->expectException(InvalidArgumentException::class);
-        $this->renderer->createTemplateByName($name);
+        $this->renderer->createTemplate($name);
     }
 
     public function testRender(): void
@@ -190,10 +190,10 @@ class RendererTest extends TestCase
         /** @var \PHPUnit\Framework\MockObject\MockObject|Renderer $renderer */
         $renderer = $this->getMockBuilder(Renderer::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['createTemplateByName'])
+            ->onlyMethods(['createTemplate'])
             ->getMock();
 
-        $renderer->method('createTemplateByName')->willReturn($tpl);
+        $renderer->method('createTemplate')->willReturn($tpl);
 
         $this->assertSame('hello world!', $renderer->render('foo'));
     }
@@ -225,7 +225,7 @@ class RendererTest extends TestCase
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
 
-        $output = $renderer->render('assets::batch', [
+        $output = $renderer->render('assets::apply', [
             'uppercase' => static fn (string $arg): string => strtoupper($arg),
             'escape' => StringUtil::class . '::escape',
         ]);
