@@ -14,7 +14,6 @@ use PHPUnit\Framework\TestCase;
 use BitFrame\Renderer\{Renderer, Template};
 use BitFrame\Renderer\Test\Asset\StringUtil;
 use RuntimeException;
-use InvalidArgumentException;
 
 use function strtoupper;
 use function strtolower;

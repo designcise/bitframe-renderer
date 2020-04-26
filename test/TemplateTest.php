@@ -65,11 +65,11 @@ class TemplateTest extends TestCase
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $tpl->getData());
     }
 
-    public function testRenderWhenTemplateDoesNotExists(): void
+    public function testCreateTemplateForNonExistentFile(): void
     {
         $this->expectException(RuntimeException::class);
 
-        new Template('foo::bar', new Renderer([]));
+        new Template('foo::bar', new Renderer(['foo' => self::ASSETS_DIR]));
     }
 
     public function testRenderCleansBufferAndThrowsExceptionIfRenderingFails(): void
