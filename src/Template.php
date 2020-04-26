@@ -1,5 +1,13 @@
 <?php
 
+/**
+ * BitFrame Framework (https://www.bitframephp.com)
+ *
+ * @author    Daniyal Hamid
+ * @copyright Copyright (c) 2017-2020 Daniyal Hamid (https://designcise.com)
+ * @license   https://bitframephp.com/about/license MIT License
+ */
+
 namespace BitFrame\Renderer;
 
 use InvalidArgumentException;
@@ -32,10 +40,8 @@ class Template
     private const CONTENT_SECTION_KEY = 'content';
 
     protected Renderer $engine;
-    
-    protected string $alias;
-    
-    protected string $fileName;
+
+    protected string $filePath;
 
     protected array $data = [];
 
@@ -53,7 +59,7 @@ class Template
     {
         $this->engine = $engine;
         $this
-            ->setName($name)
+            ->setFilePathFromName($name)
             ->withData($this->engine->getData($name));
     }
 
@@ -81,7 +87,7 @@ class Template
     {
         if (! $this->exists()) {
             throw new RuntimeException(
-                'The template "' . $this->fileName . '" could not be found at "' . $this->getFilePath() . '".'
+                'The template "' . $this->filePath . '" could not be found at "' . $this->getFilePath() . '".'
             );
         }
 
@@ -238,10 +244,7 @@ class Template
 
     public function getFilePath(): string
     {
-        return rtrim($this->engine->getFolderPathByAlias($this->alias), DIRECTORY_SEPARATOR)
-            . DIRECTORY_SEPARATOR
-            . $this->fileName . '.'
-            . $this->engine->getFileExt();
+        return $this->filePath;
     }
 
     /**
@@ -267,17 +270,22 @@ class Template
         return $this->render();
     }
 
-    private function setName(string $name): self
+    private function setFilePathFromName(string $name): self
     {
         $chunks = explode(self::NAME_SEPARATOR, $name);
-        [$this->alias, $this->fileName] = $chunks;
+        [$alias, $fileName] = $chunks;
 
-        if (empty($this->alias) || empty($this->fileName) || count($chunks) !== 2) {
+        if (empty($alias) || empty($fileName) || count($chunks) !== 2) {
             throw new InvalidArgumentException(
-                'The template name "' . $this->fileName . '" is not valid. ' .
+                'The template name "' . $fileName . '" is not valid. ' .
                 'Do not use the folder namespace separator "::" more than once.'
             );
         }
+
+        $this->filePath = rtrim($this->engine->getFolderPathByAlias($alias), DIRECTORY_SEPARATOR)
+            . DIRECTORY_SEPARATOR
+            . $fileName . '.'
+            . $this->engine->getFileExt();
 
         return $this;
     }

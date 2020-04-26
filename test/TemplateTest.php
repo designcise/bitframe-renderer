@@ -31,13 +31,13 @@ class TemplateTest extends TestCase
     public function testWithData(): void
     {
         $renderer = $this->getMockBuilder(Renderer::class)
-            ->disableOriginalConstructor()
+            ->setConstructorArgs([['test' => self::ASSETS_DIR]])
             ->setMethods(['getData'])
             ->getMock();
 
         $renderer->method('getData')->willReturn(['foo' => 'bar']);
 
-        $tpl = new Template($renderer, 'test::1234');
+        $tpl = new Template($renderer, 'test::fetch');
         $tpl->withData(['baz' => 'qux']);
 
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $tpl->getData());
@@ -45,11 +45,9 @@ class TemplateTest extends TestCase
 
     public function testRenderWhenTemplateDoesNotExists(): void
     {
-        $tpl = new Template(new Renderer([]), 'foo::bar');
-
         $this->expectException(RuntimeException::class);
 
-        $tpl->render();
+        $tpl = new Template(new Renderer([]), 'foo::bar');
     }
 
     public function testRenderCleansBufferAndThrowsExceptionIfRenderingFails(): void
