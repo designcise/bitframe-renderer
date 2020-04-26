@@ -282,7 +282,7 @@ class Template
             );
         }
 
-        $this->filePath = rtrim($this->engine->getFolderPathByAlias($alias), DIRECTORY_SEPARATOR)
+        $this->filePath = rtrim($this->engine->getPathByName($alias), DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
             . $fileName . '.'
             . $this->engine->getFileExt();

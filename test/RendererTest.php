@@ -59,7 +59,7 @@ class RendererTest extends TestCase
         $this->assertSame($expected, $renderer->getFileExt());
     }
 
-    public function testAddAndGetFolder(): void
+    public function testAddAndGetPath(): void
     {
         $renderer = new Renderer([
             'test' => 'directory/to/templates',
@@ -69,17 +69,17 @@ class RendererTest extends TestCase
         $this->assertSame([
             'test' => 'directory/to/templates',
             'foo' => 'bar/baz/qux',
-        ], $renderer->getFolders());
+        ], $renderer->getPaths());
 
-        $this->assertSame('directory/to/templates', $renderer->getFolderPathByAlias('test'));
-        $this->assertSame('bar/baz/qux', $renderer->getFolderPathByAlias('foo'));
+        $this->assertSame('directory/to/templates', $renderer->getPathByName('test'));
+        $this->assertSame('bar/baz/qux', $renderer->getPathByName('foo'));
     }
 
-    public function testAddingFolderTwiceThrowsException(): void
+    public function testAddingNonExistentPathThrowsException(): void
     {
         $this->expectException(RuntimeException::class);
 
-        $this->renderer->getFolderPathByAlias('non-existent');
+        $this->renderer->getPathByName('non-existent');
     }
 
     public function dataProvider(): array

@@ -25,15 +25,15 @@ class Renderer
 
     protected string $fileExt;
 
-    protected array $folders = [];
+    protected array $paths = [];
 
     protected Data $data;
 
     public function __construct(
-        array $folders,
+        array $paths,
         string $fileExt = self::DEFAULT_FILE_EXT
     ) {
-        $this->folders = $folders;
+        $this->paths = $paths;
         $this->fileExt = $fileExt ?: self::DEFAULT_FILE_EXT;
         $this->data = new Data();
     }
@@ -70,19 +70,19 @@ class Renderer
         return $this->data->get($template);
     }
 
-    public function getFolders(): array
+    public function getPaths(): array
     {
-        return $this->folders;
+        return $this->paths;
     }
 
-    public function getFolderPathByAlias(string $name): string
+    public function getPathByName(string $name): string
     {
-        if (! isset($this->folders[$name])) {
+        if (! isset($this->paths[$name])) {
             throw new RuntimeException(
                 'The template folder "' . $name . '" was not found.'
             );
         }
 
-        return $this->folders[$name];
+        return $this->paths[$name];
     }
 }
