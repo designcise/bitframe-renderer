@@ -42,11 +42,6 @@ class RenderContext
         $this->parentData = $data;
     }
 
-    /**
-     * Start a new section block.
-     *
-     * @param string $name
-     */
     public function start(string $name): void
     {
         if ($this->currSectionName) {

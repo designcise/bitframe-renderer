@@ -22,28 +22,60 @@ class RenderContextTest extends TestCase
     /** @var string */
     private const ASSETS_DIR = __DIR__ . '/Asset/';
 
-    public function testApplyThrowsErrorWhenFunctionNotFound(): void
+    private RenderContext $context;
+
+    public function setUp(): void
     {
         $tpl = $this->getMockBuilder(Template::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->context = new RenderContext($tpl);
+    }
 
-        $context = new RenderContext($tpl);
+    public function testCanSetParent(): void
+    {
+        $this->context->parent('blah2::layout', ['foo' => 'bar']);
+
+        $this->assertSame('blah2::layout', $this->context->getParentTemplate());
+        $this->assertSame(['foo' => 'bar'], $this->context->getParentData());
+    }
+
+    public function testNestedSectionsShouldThrowException(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::nested_sections_error', $renderer);
 
         $this->expectException(RuntimeException::class);
 
-        $context->apply('test', 'strtoupper|nonexistent');
+        $tpl->render();
+    }
+
+    public function testEndWithoutStartShouldThrowException(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $this->context->end();
+    }
+
+    public function testStartAndEnd(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section', $renderer);
+        $tpl->render();
+
+        $this->assertSame('foobar', $tpl->getSections()->get('test'));
+    }
+
+    public function testApplyThrowsErrorWhenFunctionNotFound(): void
+    {
+        $this->expectException(RuntimeException::class);
+
+        $this->context->apply('test', 'strtoupper|nonexistent');
     }
 
     public function testApplyCanApplyCallables(): void
     {
-        $tpl = $this->getMockBuilder(Template::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $context = new RenderContext($tpl);
-
-        $output = $context->apply('TEST ME', 'strtolower|ucwords');
+        $output = $this->context->apply('TEST ME', 'strtolower|ucwords');
 
         $this->assertSame('Test Me', $output);
     }
