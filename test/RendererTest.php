@@ -151,31 +151,10 @@ class RendererTest extends TestCase
 
     public function testcreateTemplate(): void
     {
-        $renderer = new Renderer(['foo' => 'bar/baz/qux']);
-        $tpl = $renderer->createTemplate('foo::bar');
+        $renderer = new Renderer(['foo' => self::ASSETS_DIR]);
+        $tpl = $renderer->createTemplate('foo::helloworld');
 
         $this->assertInstanceOf(Template::class, $tpl);
-    }
-
-    public function invalidTemplateNameProvider(): array
-    {
-        return [
-            'separator used twice' => ['foo::bar::baz'],
-            'separator used twice without ending string' => ['foo::bar::'],
-            'separator without ending string' => ['foo::'],
-        ];
-    }
-
-    /**
-     * @dataProvider invalidTemplateNameProvider
-     *
-     * @param string $name
-     */
-    public function testcreateTemplateWithInvalidNameShouldThrowException(
-        string $name
-    ): void {
-        $this->expectException(InvalidArgumentException::class);
-        $this->renderer->createTemplate($name);
     }
 
     public function testRender(): void

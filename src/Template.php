@@ -77,12 +77,6 @@ class Template
      */
     public function render(array $data = []): string
     {
-        if (! $this->exists()) {
-            throw new RuntimeException(
-                'The template "' . $this->filePath . '" could not be found at "' . $this->getPath() . '".'
-            );
-        }
-
         $this->withData($data);
         $data = $this->data;
         $file = $this->getPath();
@@ -152,16 +146,19 @@ class Template
         [$alias, $fileName] = $chunks;
 
         if (empty($alias) || empty($fileName) || count($chunks) !== 2) {
-            throw new InvalidArgumentException(
-                'The template name "' . $fileName . '" is not valid. ' .
-                'Do not use the folder namespace separator "::" more than once.'
-            );
+            throw new InvalidArgumentException('The template name "' . $fileName . '" is not valid. ');
         }
 
         $this->filePath = rtrim($this->engine->getPathByName($alias), DIRECTORY_SEPARATOR)
             . DIRECTORY_SEPARATOR
             . $fileName . '.'
             . $this->engine->getFileExt();
+
+        if (! $this->exists()) {
+            throw new RuntimeException(
+                'The template "' . $this->filePath . '" could not be found at "' . $this->getPath() . '".'
+            );
+        }
 
         return $this;
     }

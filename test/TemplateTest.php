@@ -14,6 +14,7 @@ use PHPUnit\Framework\TestCase;
 use BitFrame\Renderer\{Renderer, Template};
 use BitFrame\Renderer\Test\Asset\StringUtil;
 use RuntimeException;
+use InvalidArgumentException;
 use Throwable;
 
 use function strtoupper;
@@ -27,6 +28,27 @@ class TemplateTest extends TestCase
 {
     /** @var string */
     private const ASSETS_DIR = __DIR__ . '/Asset/';
+
+    public function invalidTemplateNameProvider(): array
+    {
+        return [
+            'separator used twice' => ['foo::bar::baz'],
+            'separator used twice without ending string' => ['foo::bar::'],
+            'separator without ending string' => ['foo::'],
+        ];
+    }
+
+    /**
+     * @dataProvider invalidTemplateNameProvider
+     *
+     * @param string $name
+     */
+    public function testcreateTemplateWithInvalidNameShouldThrowException(
+        string $name
+    ): void {
+        $this->expectException(InvalidArgumentException::class);
+        new Template($name, new Renderer([]));
+    }
 
     public function testWithData(): void
     {
@@ -65,18 +87,18 @@ class TemplateTest extends TestCase
 
     public function testGetFilePath(): void
     {
-        $renderer = new Renderer(['foo' => 'bar/baz/qux'], 'html');
-        $tpl = new Template('foo::bar', $renderer);
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR], 'html');
+        $tpl = new Template('assets::foobar', $renderer);
 
-        $this->assertSame('bar/baz/qux/bar.html', $tpl->getPath());
+        $this->assertSame(self::ASSETS_DIR . 'foobar.html', $tpl->getPath());
     }
 
     public function testGetVar(): void
     {
-        $renderer = new Renderer(['foo' => 'bar/baz/qux']);
+        $renderer = new Renderer(['foo' => self::ASSETS_DIR]);
         $renderer->withData(['hello' => 'world']);
 
-        $tpl = new Template('foo::bar', $renderer);
+        $tpl = new Template('foo::helloworld', $renderer);
         $tpl->withData(['test' => 1234]);
 
         $this->assertSame(1234, $tpl->getVar('test'));
@@ -142,5 +164,15 @@ EXP;
         ]);
 
         $this->assertSame('&lt;A HREF=&#039;#&#039;&gt;TEST&lt;/A&gt;', $output);
+    }
+
+    public function testFetch(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::apply', $renderer);
+
+        $output = $tpl->fetch('assets::helloworld');
+
+        $this->assertSame('hello world', $output);
     }
 }
