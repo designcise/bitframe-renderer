@@ -38,6 +38,13 @@ class Renderer
         $this->data = new Data();
     }
 
+    public function createTemplate(
+        string $name,
+        ?Sections $sections = null
+    ): Template {
+        return new Template($name, $this, $sections);
+    }
+
     /**
      * @param  array $data
      * @param  null|string|array $tplNames
@@ -48,13 +55,6 @@ class Renderer
     {
         $this->data->add($data, $tplNames);
         return $this;
-    }
-
-    public function createTemplate(
-        string $name,
-        ?Sections $sections = null
-    ): Template {
-        return new Template($name, $this, $sections);
     }
 
     /**
@@ -80,11 +80,6 @@ class Renderer
         return $this->data->get($tplName);
     }
 
-    public function getPaths(): array
-    {
-        return $this->paths;
-    }
-
     public function getPathByName(string $name): string
     {
         if (! isset($this->paths[$name])) {
@@ -94,5 +89,10 @@ class Renderer
         }
 
         return $this->paths[$name];
+    }
+
+    public function getPaths(): array
+    {
+        return $this->paths;
     }
 }

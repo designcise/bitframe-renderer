@@ -23,7 +23,12 @@ class RenderContext
     /** @var string */
     public const SECTION_PREPEND = 'prepend';
 
-    private Template $tpl;
+    /** @var callable */
+    private $fetchTpl;
+
+    private array $data;
+
+    private ?Sections $sections;
 
     public ?string $currSectionName = null;
 
@@ -33,9 +38,14 @@ class RenderContext
 
     private array $parentData = [];
 
-    public function __construct(Template $tpl)
-    {
-        $this->tpl = $tpl;
+    public function __construct(
+        callable $fetchTpl,
+        array $data = [],
+        ?Sections $sections = null
+    ) {
+        $this->fetchTpl = $fetchTpl;
+        $this->data = $data;
+        $this->sections = $sections;
     }
 
     public function parent(string $name, array $data = []): void
@@ -73,8 +83,7 @@ class RenderContext
             throw new RuntimeException('You must start a section before you can stop it.');
         }
 
-        $this->tpl
-            ->getSections()
+        $this->sections
             ->{$this->newSectionMode}($this->currSectionName, ob_get_clean());
 
         $this->currSectionName = null;
@@ -89,12 +98,12 @@ class RenderContext
      */
     public function section(string $name, ?string $default = null): ?string
     {
-        return $this->tpl->getSections()->get($name) ?? $default;
+        return $this->sections->get($name) ?? $default;
     }
 
     public function getData(): array
     {
-        return $this->tpl->getData();
+        return $this->data;
     }
 
     /**
@@ -107,7 +116,7 @@ class RenderContext
      */
     public function fetch(string $name, array $data = []): string
     {
-        return $this->tpl->fetch($name, $data);
+        return ($this->fetchTpl)($name, $data);
     }
 
     /**
@@ -124,7 +133,7 @@ class RenderContext
 
         foreach ($functionsList as $function) {
             if ($this->fnExists($function)) {
-                $function = $this->tpl->getVar($function);
+                $function = $this->data[$function] ?? null;
             }
 
             if (is_callable($function)) {
@@ -143,7 +152,7 @@ class RenderContext
 
     public function fnExists(string $name): bool
     {
-        $func = $this->tpl->getVar($name);
+        $func = $this->data[$name] ?? null;
         return (! empty($func) && is_callable($func));
     }
 

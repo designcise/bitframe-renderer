@@ -11,7 +11,7 @@
 namespace BitFrame\Renderer\Test;
 
 use PHPUnit\Framework\TestCase;
-use BitFrame\Renderer\{Renderer, RenderContext, Template};
+use BitFrame\Renderer\{Renderer, RenderContext, Sections, Template};
 use RuntimeException;
 
 /**
@@ -24,12 +24,13 @@ class RenderContextTest extends TestCase
 
     private RenderContext $context;
 
+    /** @var callable */
+    private $fetchCallback;
+
     public function setUp(): void
     {
-        $tpl = $this->getMockBuilder(Template::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->context = new RenderContext($tpl);
+        $this->fetchCallback = static function () {};
+        $this->context = new RenderContext($this->fetchCallback);
     }
 
     public function testCanSetParent(): void
@@ -86,44 +87,37 @@ class RenderContextTest extends TestCase
 
     public function testSection(): void
     {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template('assets::section', $renderer);
-        $context = new RenderContext($tpl);
+        $sections = new Sections(['foo' => 'bar']);
+        $context = new RenderContext($this->fetchCallback, [], $sections);
 
-        $tpl->render();
-
-        $this->assertSame('foobar', $context->section('test'));
+        $this->assertSame('bar', $context->section('foo', 'default'));
     }
 
     public function testCanGetDefaultForNonExistentSection(): void
     {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template('assets::section', $renderer);
-        $context = new RenderContext($tpl);
-
-        $tpl->render();
+        $sections = new Sections(['foo' => 'bar']);
+        $context = new RenderContext($this->fetchCallback, [], $sections);
 
         $this->assertSame('default', $context->section('non-existent', 'default'));
     }
 
     public function testGetData(): void
     {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $renderer->withData(['global' => 'foo']);
+        $data = [
+            'foo' => 'bar',
+            'baz' => 'qux',
+        ];
 
-        $tpl = new Template('assets::helloworld', $renderer);
-        $tpl->withData(['local' => 'bar']);
+        $context = new RenderContext($this->fetchCallback, $data);
 
-        $context = new RenderContext($tpl);
-
-        $this->assertSame(['global' => 'foo', 'local' => 'bar'], $context->getData());
+        $this->assertSame($data, $context->getData());
     }
 
     public function testFetch(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
         $tpl = new Template('assets::section', $renderer);
-        $context = new RenderContext($tpl);
+        $context = new RenderContext([$tpl, 'fetch']);
 
         $output = $context->fetch('assets::helloworld');
 
@@ -146,15 +140,12 @@ class RenderContextTest extends TestCase
 
     public function testApplyFunctionFromTemplateLocals(): void
     {
-        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
-        $tpl = new Template('assets::section', $renderer);
-        $context = new RenderContext($tpl);
-
-        $tpl->render([
+        $data = [
             'foo' => static function ($string) {
                 return 'Test: ' . $string;
             },
-        ]);
+        ];
+        $context = new RenderContext($this->fetchCallback, $data);
 
         $this->assertSame('TEST: HELLO!', $context->apply('Hello!', 'foo|strtoupper'));
     }

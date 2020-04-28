@@ -80,7 +80,7 @@ class Template
         $this->withData($data);
         $data = $this->data;
         $file = $this->getPath();
-        $context = new RenderContext($this);
+        $context = new RenderContext([$this, 'fetch'], $data, $this->sections);
         $content = $this->buffer((
             fn () => extract($data, EXTR_SKIP) & include $file
         )->bindTo($context));

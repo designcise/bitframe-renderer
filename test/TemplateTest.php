@@ -52,6 +52,7 @@ class TemplateTest extends TestCase
 
     public function testWithData(): void
     {
+        /** @var \PHPUnit\Framework\MockObject\MockObject|Renderer $renderer */
         $renderer = $this->getMockBuilder(Renderer::class)
             ->setConstructorArgs([['test' => self::ASSETS_DIR]])
             ->setMethods(['getData'])
@@ -63,6 +64,33 @@ class TemplateTest extends TestCase
         $tpl->withData(['baz' => 'qux']);
 
         $this->assertSame(['foo' => 'bar', 'baz' => 'qux'], $tpl->getData());
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testCanReadLocalAndGlobalDataInTemplate(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $renderer->withData(['global' => 'foo']);
+
+        $tpl = new Template('assets::data', $renderer);
+        $tpl->withData(['local' => 'bar']);
+
+        $this->assertSame('foobarbaz', $tpl->render(['inline' => 'baz']));
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function testSection(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+        $tpl = new Template('assets::section', $renderer);
+
+        $tpl->render();
+
+        $this->assertSame('foobar', $tpl->getSections()->get('test'));
     }
 
     public function testCreateTemplateForNonExistentFile(): void
