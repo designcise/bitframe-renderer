@@ -41,6 +41,9 @@ class RenderContextTest extends TestCase
         $this->assertSame(['foo' => 'bar'], $this->context->getParentData());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testNestedSectionsShouldThrowException(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -58,6 +61,9 @@ class RenderContextTest extends TestCase
         $this->context->end();
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testStartAndEnd(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -67,6 +73,9 @@ class RenderContextTest extends TestCase
         $this->assertSame('foobar', $tpl->getSections()->get('test'));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testAppend(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -76,6 +85,9 @@ class RenderContextTest extends TestCase
         $this->assertSame('foobar', $tpl->getSections()->get('test'));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testPrepend(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -113,6 +125,9 @@ class RenderContextTest extends TestCase
         $this->assertSame($data, $context->getData());
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testFetch(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);

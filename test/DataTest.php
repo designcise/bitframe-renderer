@@ -138,7 +138,7 @@ class DataTest extends TestCase
     /**
      * @dataProvider invalidTemplateProvider
      *
-     * @param $template
+     * @param mixed $template
      */
     public function testAddingInvalidTemplateTypeShouldThrowException($template): void
     {

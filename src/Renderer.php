@@ -38,10 +38,8 @@ class Renderer
         $this->data = new Data();
     }
 
-    public function createTemplate(
-        string $name,
-        ?Sections $sections = null
-    ): Template {
+    public function createTemplate(string $name, ?Sections $sections = null): Template
+    {
         return new Template($name, $this, $sections);
     }
 

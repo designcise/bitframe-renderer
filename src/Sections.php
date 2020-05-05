@@ -12,6 +12,15 @@ namespace BitFrame\Renderer;
 
 final class Sections
 {
+    /** @var string */
+    public const ADD = 'add';
+
+    /** @var string */
+    public const APPEND = 'append';
+
+    /** @var string */
+    public const PREPEND = 'prepend';
+
     private array $sections;
 
     public function __construct(array $sections = [])

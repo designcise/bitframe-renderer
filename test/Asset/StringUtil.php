@@ -12,6 +12,11 @@ namespace BitFrame\Renderer\Test\Asset;
 
 use function strtoupper;
 use function strtolower;
+use function defined;
+use function htmlspecialchars;
+
+use const ENT_QUOTES;
+use const ENT_SUBSTITUTE;
 
 class StringUtil
 {

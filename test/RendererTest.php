@@ -17,6 +17,7 @@ use RuntimeException;
 
 use function strtoupper;
 use function strtolower;
+use function array_merge;
 
 /**
  * @covers \BitFrame\Renderer\Renderer
@@ -156,6 +157,9 @@ class RendererTest extends TestCase
         $this->assertInstanceOf(Template::class, $tpl);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testRender(): void
     {
         $tpl = $this->getMockBuilder(Template::class)
@@ -176,6 +180,9 @@ class RendererTest extends TestCase
         $this->assertSame('hello world!', $renderer->render('foo'));
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -188,6 +195,9 @@ class RendererTest extends TestCase
         $this->assertSame('HELLO world!', $output);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testTemplateCanUseGlobalAndLocalObjectMethods(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -199,6 +209,9 @@ class RendererTest extends TestCase
         $this->assertSame('HELLO world!', $output);
     }
 
+    /**
+     * @throws \Throwable
+     */
     public function testTemplateCanBatchApplyFunctions(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);

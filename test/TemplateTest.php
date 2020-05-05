@@ -20,6 +20,7 @@ use Throwable;
 use function strtoupper;
 use function strtolower;
 use function ob_get_level;
+use function ob_get_contents;
 
 /**
  * @covers \BitFrame\Renderer\Template
@@ -43,9 +44,8 @@ class TemplateTest extends TestCase
      *
      * @param string $name
      */
-    public function testcreateTemplateWithInvalidNameShouldThrowException(
-        string $name
-    ): void {
+    public function testcreateTemplateWithInvalidNameShouldThrowException(string $name): void
+    {
         $this->expectException(InvalidArgumentException::class);
         new Template($name, new Renderer([]));
     }
@@ -134,6 +134,9 @@ class TemplateTest extends TestCase
         $this->assertSame('default', $tpl->getVar('non-existent', 'default'));
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testCanLoadParentFromChild(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -155,6 +158,9 @@ EXP;
         $this->assertSame($expected, $output);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -169,6 +175,9 @@ EXP;
         $this->assertSame('HELLO world!', $output);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testTemplateCanUseGlobalAndLocalObjectMethods(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -181,6 +190,9 @@ EXP;
         $this->assertSame('HELLO world!', $output);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testTemplateCanApplyFunctions(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
@@ -194,6 +206,9 @@ EXP;
         $this->assertSame('&lt;A HREF=&#039;#&#039;&gt;TEST&lt;/A&gt;', $output);
     }
 
+    /**
+     * @throws Throwable
+     */
     public function testFetch(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);

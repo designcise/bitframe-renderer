@@ -12,17 +12,13 @@ namespace BitFrame\Renderer;
 
 use RuntimeException;
 
+use function ob_start;
+use function ob_get_clean;
+use function explode;
+use function is_callable;
+
 class RenderContext
 {
-    /** @var string */
-    public const SECTION_ADD = 'add';
-
-    /** @var string */
-    public const SECTION_APPEND = 'append';
-
-    /** @var string */
-    public const SECTION_PREPEND = 'prepend';
-
     /** @var callable */
     private $fetchTpl;
 
@@ -32,7 +28,7 @@ class RenderContext
 
     public ?string $currSectionName = null;
 
-    public string $newSectionMode = self::SECTION_ADD;
+    public string $newSectionMode = Sections::ADD;
 
     private string $parentTemplate = '';
 
@@ -67,13 +63,13 @@ class RenderContext
 
     public function append(string $name): void
     {
-        $this->newSectionMode = self::SECTION_APPEND;
+        $this->newSectionMode = Sections::APPEND;
         $this->start($name);
     }
 
     public function prepend(string $name): void
     {
-        $this->newSectionMode = self::SECTION_PREPEND;
+        $this->newSectionMode = Sections::PREPEND;
         $this->start($name);
     }
 
@@ -87,15 +83,9 @@ class RenderContext
             ->{$this->newSectionMode}($this->currSectionName, ob_get_clean());
 
         $this->currSectionName = null;
-        $this->newSectionMode = self::SECTION_ADD;
+        $this->newSectionMode = Sections::ADD;
     }
 
-    /**
-     * @param string $name
-     * @param string $default
-     *
-     * @return string|null
-     */
     public function section(string $name, ?string $default = null): ?string
     {
         return $this->sections->get($name) ?? $default;

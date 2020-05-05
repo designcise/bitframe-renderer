@@ -23,7 +23,9 @@ use function extract;
 use function ob_get_level;
 use function ob_start;
 use function ob_get_clean;
+use function ob_end_clean;
 
+use const EXTR_SKIP;
 use const DIRECTORY_SEPARATOR;
 
 /**
@@ -55,11 +57,6 @@ class Template
         $this->sections = $sections ?? new Sections();
     }
 
-    /**
-     * @param array $data
-     *
-     * @return Template
-     */
     public function withData(array $data): self
     {
         $this->data = array_merge($this->data, $data);
@@ -67,9 +64,7 @@ class Template
     }
 
     /**
-     * Render the template and layout.
-     *
-     * @param array  $data
+     * @param array $data
      *
      * @return string
      *
@@ -128,9 +123,9 @@ class Template
 
     /**
      * @param string $name
-     * @param mixed|null $default
+     * @param mixed $default
      *
-     * @return mixed|null
+     * @return mixed
      */
     public function getVar(string $name, $default = null)
     {

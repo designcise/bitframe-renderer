@@ -36,7 +36,7 @@ $output = $renderer->render('main::test', ['baz' => 'qux']);
 
 ## Tests
 
-To run the tests you can use the following command:
+To run the tests you can use the following commands:
 
 | Command          | Type            |
 | ---------------- |:---------------:|
