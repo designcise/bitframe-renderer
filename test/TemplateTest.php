@@ -161,6 +161,29 @@ EXP;
     /**
      * @throws Throwable
      */
+    public function testCanLoadNestedTemplates(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+
+        $tpl = new Template('assets::nested-3', $renderer);
+
+        $output = $tpl->render();
+
+        $expected =<<<EXP
+<h1>Parent:</h1>
+<ul>
+<li>#1;</li>
+<li>#2;</li>
+<li>#3;</li>
+</ul>
+EXP;
+
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);

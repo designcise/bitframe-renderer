@@ -34,14 +34,18 @@ class RenderContext
 
     private array $parentData = [];
 
+    private string $childContent;
+
     public function __construct(
         callable $fetchTpl,
         array $data = [],
-        ?Sections $sections = null
+        ?Sections $sections = null,
+        string $childContent = ''
     ) {
         $this->fetchTpl = $fetchTpl;
         $this->data = $data;
         $this->sections = $sections;
+        $this->childContent = $childContent;
     }
 
     public function parent(string $name, array $data = []): void
@@ -89,6 +93,11 @@ class RenderContext
     public function section(string $name, ?string $default = null): ?string
     {
         return $this->sections->get($name) ?? $default;
+    }
+
+    public function getContent(): string
+    {
+        return $this->childContent;
     }
 
     public function getData(): array

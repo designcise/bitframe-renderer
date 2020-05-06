@@ -139,6 +139,15 @@ class RenderContextTest extends TestCase
         $this->assertSame('hello world', $output);
     }
 
+    public function testGetContent(): void
+    {
+        $callable = fn () => null;
+        $childContent = '<p>test</p>';
+        $context = new RenderContext($callable, [], null, $childContent);
+
+        $this->assertSame($childContent, $context->getContent());
+    }
+
     public function testApplyThrowsErrorWhenFunctionNotFound(): void
     {
         $this->expectException(RuntimeException::class);

@@ -1,5 +1,5 @@
 <h1>Parent</h1>
 
-<?= $this->section('content') ?>
+<?= $this->getContent() ?>
 
 <p><?= $foo; ?></p>

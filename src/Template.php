@@ -36,9 +36,6 @@ class Template
     /** @var string */
     private const NAME_SEPARATOR = '::';
 
-    /** @var string */
-    private const CONTENT_SECTION_KEY = 'content';
-
     protected Renderer $engine;
 
     protected string $filePath;
@@ -46,6 +43,8 @@ class Template
     protected array $data = [];
 
     private Sections $sections;
+
+    private string $childContent = '';
 
     public function __construct(
         string $name,
@@ -75,7 +74,12 @@ class Template
         $this->withData($data);
         $data = $this->data;
         $file = $this->getPath();
-        $context = new RenderContext([$this, 'fetch'], $data, $this->sections);
+        $context = new RenderContext(
+            [$this, 'fetch'],
+            $data,
+            $this->sections,
+            $this->childContent
+        );
         $content = $this->buffer((
             fn () => extract($data, EXTR_SKIP) & include $file
         )->bindTo($context));
@@ -84,7 +88,7 @@ class Template
 
         if (! empty($parentTpl)) {
             $parent = $this->engine->createTemplate($parentTpl, $this->sections);
-            $parent->getSections()->add(self::CONTENT_SECTION_KEY, $content);
+            $parent->setChildContent($content);
             $content = $parent->render($context->getParentData());
         }
 
@@ -137,6 +141,13 @@ class Template
         return $this->sections;
     }
 
+    public function setChildContent(string $content): self
+    {
+        $this->childContent = $content;
+
+        return $this;
+    }
+
     private function setFilePathFromName(string $name): self
     {
         $chunks = explode(self::NAME_SEPARATOR, $name);
@@ -160,6 +171,13 @@ class Template
         return $this;
     }
 
+    /**
+     * @param callable $wrap
+     *
+     * @return false|string
+     *
+     * @throws Throwable
+     */
     private function buffer(callable $wrap)
     {
         $level = ob_get_level();
