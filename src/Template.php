@@ -107,7 +107,7 @@ class Template
      */
     public function fetch(string $name, array $data = []): string
     {
-        return $this->engine->render($name, $data);
+        return $this->engine->createTemplate($name, $this->sections)->render($data);
     }
 
     public function exists(): bool

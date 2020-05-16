@@ -184,6 +184,40 @@ EXP;
     /**
      * @throws Throwable
      */
+    public function testCanLoadAppendedContent(): void
+    {
+        $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
+
+        $tpl = new Template('assets::nested-fetch-3', $renderer);
+
+        $output = $tpl->render();
+
+        $expected =<<<EXP
+<script>
+alert('p-1.2');
+alert('p-1.1');
+alert('p-2.2');
+alert('p-2.1');
+alert('p-3.2');
+alert('p-3.1');
+alert('#3');
+alert('a-3.1');
+alert('a-3.2');
+alert('#2');
+alert('a-2.1');
+alert('a-2.2');
+alert('#1');
+alert('a-1.1');
+alert('a-1.2');
+</script>
+EXP;
+
+        $this->assertSame($expected, $output);
+    }
+
+    /**
+     * @throws Throwable
+     */
     public function testTemplateCanUseGlobalAndLocalFunction(): void
     {
         $renderer = new Renderer(['assets' => self::ASSETS_DIR]);
