@@ -52,7 +52,7 @@ To run the tests you can use the following commands:
 
 ## Documentation
 
-Complete documentation for will be available soon.
+Complete documentation for v3 will be available soon.
 
 ## License
 
