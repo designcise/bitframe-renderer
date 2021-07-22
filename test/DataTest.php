@@ -15,7 +15,7 @@ namespace BitFrame\Renderer\Test;
 use stdClass;
 use PHPUnit\Framework\TestCase;
 use BitFrame\Renderer\Data;
-use InvalidArgumentException;
+use TypeError;
 
 use function array_merge;
 
@@ -87,7 +87,7 @@ class DataTest extends TestCase
     public function testAddAndGet(
         array $sharedVars,
         array $tplSpecificVars,
-        $template
+        $template,
     ): void {
         $this->data->add($sharedVars);
         $this->data->add($tplSpecificVars, $template);
@@ -142,9 +142,9 @@ class DataTest extends TestCase
      *
      * @param mixed $template
      */
-    public function testAddingInvalidTemplateTypeShouldThrowException($template): void
+    public function testAddingInvalidTemplateTypeShouldThrowException(mixed $template): void
     {
-        $this->expectException(InvalidArgumentException::class);
+        $this->expectException(TypeError::class);
         $this->data->add(['foo' => 'bar'], $template);
     }
 }

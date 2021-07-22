@@ -25,15 +25,12 @@ class Renderer
 
     protected string $fileExt;
 
-    protected array $paths = [];
-
     protected Data $data;
 
     public function __construct(
-        array $paths,
-        string $fileExt = self::DEFAULT_FILE_EXT
+        protected array $paths = [],
+        string $fileExt = self::DEFAULT_FILE_EXT,
     ) {
-        $this->paths = $paths;
         $this->fileExt = $fileExt ?: self::DEFAULT_FILE_EXT;
         $this->data = new Data();
     }
@@ -43,13 +40,7 @@ class Renderer
         return new Template($name, $this, $sections);
     }
 
-    /**
-     * @param  array $data
-     * @param  null|string|array $tplNames
-     *
-     * @return $this
-     */
-    public function withData(array $data, $tplNames = null): self
+    public function withData(array $data, null|string|array $tplNames = null): self
     {
         $this->data->add($data, $tplNames);
         return $this;

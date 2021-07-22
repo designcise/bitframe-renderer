@@ -22,10 +22,6 @@ class RenderContext
     /** @var callable */
     private $fetchTpl;
 
-    private array $data;
-
-    private ?Sections $sections;
-
     public ?string $currSectionName = null;
 
     public string $newSectionMode = Sections::ADD;
@@ -34,18 +30,13 @@ class RenderContext
 
     private array $parentData = [];
 
-    private string $childContent;
-
     public function __construct(
         callable $fetchTpl,
-        array $data = [],
-        ?Sections $sections = null,
-        string $childContent = ''
+        private array $data = [],
+        private ?Sections $sections = null,
+        private string $childContent = '',
     ) {
         $this->fetchTpl = $fetchTpl;
-        $this->data = $data;
-        $this->sections = $sections;
-        $this->childContent = $childContent;
     }
 
     public function parent(string $name, array $data = []): void
@@ -126,7 +117,7 @@ class RenderContext
      *
      * @return mixed
      */
-    public function apply($subject, string $functions)
+    public function apply(mixed $subject, string $functions): mixed
     {
         $functionsList = explode('|', $functions);
 

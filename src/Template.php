@@ -38,8 +38,6 @@ class Template
     /** @var string */
     private const NAME_SEPARATOR = '::';
 
-    protected Renderer $engine;
-
     protected string $filePath;
 
     protected array $data = [];
@@ -50,10 +48,9 @@ class Template
 
     public function __construct(
         string $name,
-        Renderer $engine,
-        ?Sections $sections = null
+        protected Renderer $engine,
+        ?Sections $sections = null,
     ) {
-        $this->engine = $engine;
         $this->setFilePathFromName($name)->withData($this->engine->getData($name));
         $this->sections = $sections ?? new Sections();
     }
@@ -133,7 +130,7 @@ class Template
      *
      * @return mixed
      */
-    public function getVar(string $name, $default = null)
+    public function getVar(string $name, mixed $default = null): mixed
     {
         return $this->getData()[$name] ?? $default;
     }
@@ -180,7 +177,7 @@ class Template
      *
      * @throws Throwable
      */
-    private function buffer(callable $wrap)
+    private function buffer(callable $wrap): false|string
     {
         $level = ob_get_level();
 

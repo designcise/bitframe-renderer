@@ -27,13 +27,7 @@ class Data
 
     protected array $templateSpecificVars = [];
 
-    /**
-     * @param  array $data
-     * @param  null|string|array $templates
-     *
-     * @return $this
-     */
-    public function add(array $data, $templates = null): self
+    public function add(array $data, null|string|array $templates = null): self
     {
         if (null === $templates) {
             $this->shareWithAll($data);

@@ -23,11 +23,8 @@ final class Sections
     /** @var string */
     public const PREPEND = 'prepend';
 
-    private array $sections;
-
-    public function __construct(array $sections = [])
+    public function __construct(private array $sections = [])
     {
-        $this->sections = $sections;
     }
 
     public function add(string $name, string $content): void
