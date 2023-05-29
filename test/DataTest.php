@@ -82,12 +82,12 @@ class DataTest extends TestCase
      *
      * @param array $sharedVars
      * @param array $tplSpecificVars
-     * @param string|array|null $template
+     * @param array|string|null $template
      */
     public function testAddAndGet(
         array $sharedVars,
         array $tplSpecificVars,
-        $template,
+        array|string|null $template,
     ): void {
         $this->data->add($sharedVars);
         $this->data->add($tplSpecificVars, $template);

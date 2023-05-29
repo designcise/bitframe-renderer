@@ -46,7 +46,7 @@ class TemplateTest extends TestCase
      *
      * @param string $name
      */
-    public function testcreateTemplateWithInvalidNameShouldThrowException(string $name): void
+    public function testCreateTemplateWithInvalidNameShouldThrowException(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Template($name, new Renderer([]));

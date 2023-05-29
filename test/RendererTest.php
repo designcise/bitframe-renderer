@@ -135,12 +135,12 @@ class RendererTest extends TestCase
      *
      * @param array $sharedVars
      * @param array $tplSpecificVars
-     * @param string|array|null $template
+     * @param array|string|null $template
      */
     public function testAddAndGetData(
         array $sharedVars,
         array $tplSpecificVars,
-        $template,
+        array|string|null $template,
     ): void {
         $this->renderer->withData($sharedVars);
         $this->renderer->withData($tplSpecificVars, $template);
