@@ -73,7 +73,7 @@ class RenderContext
     public function end(): void
     {
         if (null === $this->currSectionName) {
-            throw new RuntimeException('You must start a section before you can stop it.');
+            throw new RuntimeException('You must start a section before you can end it.');
         }
 
         $this->sections
