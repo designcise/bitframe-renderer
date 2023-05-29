@@ -34,9 +34,9 @@ class RenderContext
 
     public function __construct(
         callable $fetchTpl,
-        private array $data = [],
-        private ?Sections $sections = null,
-        private string $childContent = '',
+        private readonly array $data = [],
+        private readonly ?Sections $sections = null,
+        private readonly string $childContent = '',
     ) {
         $this->fetchTpl = $fetchTpl;
     }
