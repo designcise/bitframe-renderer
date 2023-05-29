@@ -1,7 +1,8 @@
 # BitFrame\Renderer
 
-[![codecov](https://codecov.io/gh/designcise/bitframe-renderer/branch/master/graph/badge.svg)](https://codecov.io/gh/designcise/bitframe-renderer)
-[![Build Status](https://travis-ci.com/designcise/bitframe-renderer.svg?branch=master)](https://travis-ci.com/designcise/bitframe-renderer)
+[![CI](https://github.com/designcise/bitframe-renderer/actions/workflows/ci.yml/badge.svg)](https://github.com/designcise/bitframe-renderer/actions/workflows/ci.yml)
+[![Maintainability](https://api.codeclimate.com/v1/badges/d5c3dc2fadc44ffea89c/maintainability)](https://codeclimate.com/github/designcise/bitframe-renderer/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/d5c3dc2fadc44ffea89c/test_coverage)](https://codeclimate.com/github/designcise/bitframe-renderer/test_coverage)
 
 Simple PHP-based templating engine.
 
@@ -13,7 +14,7 @@ Install using composer:
 $ composer require designcise/bitframe-renderer
 ```
 
-Please note that this package requires PHP 8.0 or newer.
+Please note that this package requires PHP 8.2 or newer.
 
 ## Usage Example
 
