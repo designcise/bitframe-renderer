@@ -31,17 +31,11 @@ class Data
     {
         if (null === $templates) {
             $this->shareWithAll($data);
-            return $this;
-        }
-
-        if (is_array($templates) || is_string($templates)) {
+        } else {
             $this->shareWithSome($data, (array) $templates);
-            return $this;
         }
 
-        throw new InvalidArgumentException(
-            'The templates variable must either be null, an array or a string, ' . gettype($templates) . ' given.'
-        );
+        return $this;
     }
 
     public function get(?string $template = null): array
