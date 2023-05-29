@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace BitFrame\Renderer;
 
-use InvalidArgumentException;
-
-use function is_array;
-use function is_string;
 use function array_merge;
 
 /**
