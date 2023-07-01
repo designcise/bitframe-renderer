@@ -4,7 +4,7 @@
  * BitFrame Framework (https://www.bitframephp.com)
  *
  * @author    Daniyal Hamid
- * @copyright Copyright (c) 2017-2020 Daniyal Hamid (https://designcise.com)
+ * @copyright Copyright (c) 2017-2023 Daniyal Hamid (https://designcise.com)
  * @license   https://bitframephp.com/about/license MIT License
  */
 
@@ -12,10 +12,6 @@ declare(strict_types=1);
 
 namespace BitFrame\Renderer;
 
-use InvalidArgumentException;
-
-use function is_array;
-use function is_string;
 use function array_merge;
 
 /**
@@ -31,17 +27,11 @@ class Data
     {
         if (null === $templates) {
             $this->shareWithAll($data);
-            return $this;
-        }
-
-        if (is_array($templates) || is_string($templates)) {
+        } else {
             $this->shareWithSome($data, (array) $templates);
-            return $this;
         }
 
-        throw new InvalidArgumentException(
-            'The templates variable must either be null, an array or a string, ' . gettype($templates) . ' given.'
-        );
+        return $this;
     }
 
     public function get(?string $template = null): array

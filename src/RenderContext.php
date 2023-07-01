@@ -4,7 +4,7 @@
  * BitFrame Framework (https://www.bitframephp.com)
  *
  * @author    Daniyal Hamid
- * @copyright Copyright (c) 2017-2020 Daniyal Hamid (https://designcise.com)
+ * @copyright Copyright (c) 2017-2023 Daniyal Hamid (https://designcise.com)
  * @license   https://bitframephp.com/about/license MIT License
  */
 
@@ -34,9 +34,9 @@ class RenderContext
 
     public function __construct(
         callable $fetchTpl,
-        private array $data = [],
-        private ?Sections $sections = null,
-        private string $childContent = '',
+        private readonly array $data = [],
+        private readonly ?Sections $sections = null,
+        private readonly string $childContent = '',
     ) {
         $this->fetchTpl = $fetchTpl;
     }
@@ -73,7 +73,7 @@ class RenderContext
     public function end(): void
     {
         if (null === $this->currSectionName) {
-            throw new RuntimeException('You must start a section before you can stop it.');
+            throw new RuntimeException('You must start a section before you can end it.');
         }
 
         $this->sections

@@ -10,7 +10,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0"
+        "php": ">=8.2"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
@@ -23,7 +23,8 @@
         "style-fix": "vendor/bin/phpcbf --standard=PSR12 src",
         "check": "vendor/bin/phpstan analyse src --level=5 -c phpstan.neon",
         "md": "vendor/bin/phpmd src text cleancode,unusedcode,codesize,design,naming",
-        "test": "vendor/bin/phpunit --configuration phpunit.xml --testsuite bitframe_renderer"
+        "test": "vendor/bin/phpunit --configuration phpunit.xml --testsuite bitframe_renderer",
+        "test-report": "vendor/bin/phpunit --configuration phpunit.xml --testsuite bitframe_renderer --coverage-clover=coverage.xml"
     },
     "autoload": {
         "psr-4": {

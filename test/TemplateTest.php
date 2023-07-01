@@ -4,7 +4,7 @@
  * BitFrame Framework (https://www.bitframephp.com)
  *
  * @author    Daniyal Hamid
- * @copyright Copyright (c) 2017-2021 Daniyal Hamid (https://designcise.com)
+ * @copyright Copyright (c) 2017-2023 Daniyal Hamid (https://designcise.com)
  * @license   https://bitframephp.com/about/license MIT License
  */
 
@@ -46,7 +46,7 @@ class TemplateTest extends TestCase
      *
      * @param string $name
      */
-    public function testcreateTemplateWithInvalidNameShouldThrowException(string $name): void
+    public function testCreateTemplateWithInvalidNameShouldThrowException(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);
         new Template($name, new Renderer([]));

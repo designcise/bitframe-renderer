@@ -4,7 +4,7 @@
  * BitFrame Framework (https://www.bitframephp.com)
  *
  * @author    Daniyal Hamid
- * @copyright Copyright (c) 2017-2021 Daniyal Hamid (https://designcise.com)
+ * @copyright Copyright (c) 2017-2023 Daniyal Hamid (https://designcise.com)
  * @license   https://bitframephp.com/about/license MIT License
  */
 
@@ -135,12 +135,12 @@ class RendererTest extends TestCase
      *
      * @param array $sharedVars
      * @param array $tplSpecificVars
-     * @param string|array|null $template
+     * @param array|string|null $template
      */
     public function testAddAndGetData(
         array $sharedVars,
         array $tplSpecificVars,
-        $template,
+        array|string|null $template,
     ): void {
         $this->renderer->withData($sharedVars);
         $this->renderer->withData($tplSpecificVars, $template);
